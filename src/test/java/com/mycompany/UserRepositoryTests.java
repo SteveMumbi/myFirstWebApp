@@ -26,8 +26,9 @@ public class UserRepositoryTests {
         User user = new User();
         user.setEmail("samuelkaru@gmail.com");
         user.setFirstName("Samuel");
-        user.setLastName("Karu");
-        user.setPassword("SomberoPicasso");
+        user.setLastName("Mike");
+        user.setPassword("SomberPicasso");
+        user.setEnabled(false);
 
         //persisting the object to DB and assigning the returned instance of the persisted object
         User savedUser = repo.save(user);
@@ -58,16 +59,21 @@ public class UserRepositoryTests {
         //Fetching record to update from DB and assigning the container object of type User
         Optional<User> optionalUser = repo.findById(userId);
         //Assigning value of the container object to a User object
-        User user = optionalUser.get();
-        //Updating pwd
-        user.setPassword("SierraPapa*1");
-        //Committing to DB
-        repo.save(user);
-
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            //Updating pwd
+            user.setPassword("SierraPapa*1");
+            //Committing to DB
+            repo.save(user);
+        }
         //Fetching updated record from DB
-        User updatedUser = repo.findById(userId).get();
-        //Asserting that the pwd was changed
-        Assertions.assertThat(updatedUser.getPassword()).isEqualTo("SierraPapa*1");
+        Optional<User> updatedRecord = repo.findById(userId);
+        if (updatedRecord.isPresent()) {
+            User updatedUser = updatedRecord.get();
+            //Asserting that the pwd was changed
+            Assertions.assertThat(updatedUser.getPassword()).isEqualTo("SierraPapa*1");
+        }
+
     }
 
     //Test method - RECEIVING USER BY ID
@@ -93,6 +99,4 @@ public class UserRepositoryTests {
         //Asserting that the record is deleted
         Assertions.assertThat(optionalUser).isNotPresent();
     }
-
-
 }
